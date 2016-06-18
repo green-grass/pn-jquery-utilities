@@ -1,0 +1,28 @@
+{
+  "name": "pn-jquery-utilities",
+  "version": "1.0.0-rc1-1",
+  "description": "PhantomNet jQuery utilities",
+  "main": "./dist/pn-utilities.js",
+  "authors": [
+    "Minh Nguyen <mnguyen284@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "PhantomNet",
+    "jQuery"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "homepage": "https://github.com/green-grass/pn-jquery-utilities",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0"
+  }
+}

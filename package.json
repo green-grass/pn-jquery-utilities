@@ -1,0 +1,14 @@
+{
+  "name": "pn-jquery-utilities",
+  "description": "PhantomNet jQuery utilities",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/green-grass/pn-jquery-utilities.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-uglify": "1.2.0",
+    "rimraf": "2.2.8"
+  }
+}
