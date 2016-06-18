@@ -1,6 +1,6 @@
 {
   "name": "pn-jquery-utilities",
-  "version": "1.0.0-rc1-1",
+  "version": "1.0.0-rc1-2",
   "description": "PhantomNet jQuery utilities",
   "main": "./dist/pn-utilities.js",
   "authors": [

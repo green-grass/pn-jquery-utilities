@@ -125,7 +125,8 @@
 
     ////////////////////////////////////////////////////////////////
     // pasteHtmlAtCaret
-    PN.pasteHtmlAtCaret = function (html) {
+    // http://stackoverflow.com/questions/6690752/insert-html-at-caret-in-a-contenteditable-div/6691294#6691294
+    PN.pasteHtmlAtCaret = function(html, selectPastedContent) {
         var sel, range;
         if (window.getSelection) {
             // IE9 and non-IE
@@ -135,27 +136,40 @@
                 range.deleteContents();
 
                 // Range.createContextualFragment() would be useful here but is
-                // non-standard and not supported in all browsers (IE9, for one)
+                // only relatively recently standardized and is not supported in
+                // some browsers (IE9, for one)
                 var el = document.createElement("div");
                 el.innerHTML = html;
                 var frag = document.createDocumentFragment(), node, lastNode;
                 while ((node = el.firstChild)) {
                     lastNode = frag.appendChild(node);
                 }
+                var firstNode = frag.firstChild;
                 range.insertNode(frag);
 
                 // Preserve the selection
                 if (lastNode) {
                     range = range.cloneRange();
                     range.setStartAfter(lastNode);
-                    range.collapse(true);
+                    if (selectPastedContent) {
+                        range.setStartBefore(firstNode);
+                    } else {
+                        range.collapse(true);
+                    }
                     sel.removeAllRanges();
                     sel.addRange(range);
                 }
             }
-        } else if (document.selection && document.selection.type !== "Control") {
+        } else if ((sel = document.selection) && sel.type != "Control") {
             // IE < 9
-            document.selection.createRange().pasteHTML(html);
+            var originalRange = sel.createRange();
+            originalRange.collapse(true);
+            sel.createRange().pasteHTML(html);
+            if (selectPastedContent) {
+                range = sel.createRange();
+                range.setEndPoint("StartToStart", originalRange);
+                range.select();
+            }
         }
     };
 
