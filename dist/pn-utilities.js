@@ -293,7 +293,7 @@
             return;
         }
 
-        if (Modernizr && Modernizr.inputtypes.date) {
+        if (window.Modernizr && Modernizr.inputtypes.date) {
             if (!Modernizr.touch) {
                 elements.attr('type', 'text');
                 _initDatepickers(elements, options);
