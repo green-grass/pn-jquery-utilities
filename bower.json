@@ -1,6 +1,6 @@
 {
   "name": "pn-jquery-utilities",
-  "version": "1.0.0-rc1-3",
+  "version": "1.0.0-rc1-4",
   "description": "PhantomNet jQuery utilities",
   "main": "./dist/pn-utilities.js",
   "authors": [
@@ -24,6 +24,6 @@
   ],
   "dependencies": {
     "modernizer": "~2.8.2",
-    "jquery": "~2.2.0"
+    "jquery": ">= 2.0.0"
   }
 }
