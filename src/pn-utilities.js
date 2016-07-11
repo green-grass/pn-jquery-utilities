@@ -126,7 +126,7 @@
     ////////////////////////////////////////////////////////////////
     // pasteHtmlAtCaret
     // http://stackoverflow.com/questions/6690752/insert-html-at-caret-in-a-contenteditable-div/6691294#6691294
-    PN.pasteHtmlAtCaret = function(html, selectPastedContent) {
+    PN.pasteHtmlAtCaret = function (html, selectPastedContent) {
         var sel, range;
         if (window.getSelection) {
             // IE9 and non-IE
@@ -171,6 +171,103 @@
                 range.select();
             }
         }
+    };
+
+    ////////////////////////////////////////////////////////////////
+    // turnOnContentHtml
+    PN.turnOnContentHtml = function (html) {
+        html = html || '';
+
+        var regexp, match, replacement;
+
+        // Name base images
+        regexp = /\[image\s+src\s*=\s*('\s*([^']+)\s*'|"\s*([^"]+)\s*")(\s+alt=\s*('\s*([\s\S]*?)\s*'|"\s*([\s\S]*?)\s*"))*(\s+caption=\s*('\s*([\s\S]*?)\s*'|"\s*([\s\S]*?)\s*"))*(\s+description=\s*('\s*([\s\S]*?)\s*'|"\s*([\s\S]*?)\s*"))*\s*\]/g;
+        while ((match = regexp.exec(html)) !== null) {
+            var src = match[2] ? match[2] : match[3],
+                alt = match[6] ? match[6] : match[7],
+                caption = match[10] ? match[10] : match[11],
+                description = match[14] ? match[14] : match[15];
+            replacement = '<figure><img class="img-responsive" alt="' + alt + '" caption="' + caption + '" description="' + description + '" src="' + src + '" /></figure>';
+            html = html.replace(match[0], replacement);
+        }
+
+        // Captions
+        regexp = /\[label\][\s\S]*?\[\/label\]/g;
+        while ((match = regexp.exec(html)) !== null) {
+            replacement = match[0].replace(/<\/div>\s*<div>/g, '<br />');
+            html = html.replace(match[0], replacement);
+        }
+        html = html.replace(/\[label\]/g, '<figure><figcaption>');
+        html = html.replace(/\[\/label\]/g, '</figcaption></figure>');
+        html = html.replace(/<\/figure><figure><figcaption>/g, '<figcaption>');
+
+        // Youtube
+        regexp = /\[youtube\]([a-zA-Z0-9]{11})\[\/youtube\]/g;
+        while ((match = regexp.exec(html)) !== null) {
+            replacement = '<div class="embed-responsive embed-responsive-16by9"><iframe src="https://www.youtube.com/embed/' + match[1] + '?rel=0" allowfullscreen></iframe></div>';
+            html = html.replace(match[0], replacement);
+        }
+
+        // Asides
+        html = html.replace(/\[aside\]/g, '<div class="aside">');
+        html = html.replace(/\[\/aside\]/g, '</div>');
+
+        return html;
+    };
+
+    ////////////////////////////////////////////////////////////////
+    // turnOffContentHtml
+    PN.turnOffContentHtml = function (html) {
+        html = html || '';
+
+        // Images, captions
+        var container = $('<div></div>').html(html),
+            figures = container.find('figure');
+
+        $.each(figures, function (index, value) {
+            var $value = $(value),
+                image = $('img', $value),
+                figcaption = $('figcaption', $value).html(),
+                replacement = '';
+            if (image.is('*')) {
+                var src = image.attr('src'),
+                    alt = image.attr('alt'),
+                    caption = image.attr('caption'),
+                    description = image.attr('description');
+                alt = alt === undefined ? '' : alt;
+                caption = caption === undefined ? '' : caption;
+                description = description === undefined ? '' : description;
+                replacement += '[image src="' + src + '" alt="' + alt + '" caption="' + caption + '" description="' + description + '"]';
+            }
+            if (figcaption) {
+                replacement += '[label]' + figcaption + '[/label]';
+            }
+            $value.replaceWith(replacement);
+        });
+
+        // Youtube
+        var videos = container.find('.embed-responsive');
+        $.each(videos, function (index, value) {
+            var $value = $(value),
+                iframe = $('iframe', $value),
+                clipId,
+                replacement;
+            if (iframe.attr('src') && iframe.attr('src').indexOf('https://www.youtube.com') === 0) {
+                clipId = iframe.attr('src').substr('https://www.youtube.com/embed/'.length, 11);
+                replacement = '[youtube]' + clipId + '[/youtube]';
+                $value.replaceWith(replacement);
+            }
+        });
+
+        // Asides
+        var asides = container.find('div.aside');
+        $.each(asides, function (index, value) {
+            var $value = $(value),
+                replacement = '[aside]' + $value.html() + '[/aside]';
+            $value.replaceWith(replacement);
+        });
+
+        return container.html();
     };
 
     ////////////////////////////////////////////////////////////////
