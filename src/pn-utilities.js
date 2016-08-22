@@ -91,9 +91,9 @@
     PN.textWithLineBreaks = function (html) {
         var breakToken = '_______break_______',
             lineBreakedHtml = html.replace(/<br\s?\/?>/gi, breakToken)
-                                  .replace(/<p\.*?>(.*?)<\/p>/gi, breakToken + "$1" + breakToken)
-                                  .replace(/<div\.*?>(.*?)<\/div>/gi, breakToken + "$1" + breakToken)
-                                  .replace(/<li\.*?>(.*?)<\/li>/gi, breakToken + "$1" + breakToken);
+                .replace(/<p\.*?>(.*?)<\/p>/gi, breakToken + "$1" + breakToken)
+                .replace(/<div\.*?>(.*?)<\/div>/gi, breakToken + "$1" + breakToken)
+                .replace(/<li\.*?>(.*?)<\/li>/gi, breakToken + "$1" + breakToken);
         var ret = $("<div></div>").html(lineBreakedHtml).text().replace(/\n/g, "").replace(new RegExp(breakToken, "g"), "\n");
         while (ret.indexOf("\n\n") > -1) {
             ret = ret.replace("\n\n", "\n");
@@ -105,9 +105,9 @@
     // escapeHtmlWithLineBreaks
     PN.escapeHtmlWithLineBreaks = function (html) {
         return html.replace(/&/g, "&amp;")
-                   .replace(/</g, "&lt;")
-                   .replace(/>/g, "&gt;")
-                   .replace(/\n/g, "<br />");
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\n/g, "<br />");
     };
 
     ////////////////////////////////////////////////////////////////
@@ -121,6 +121,64 @@
             source = source.replace(/--/g, "-");
         }
         return source;
+    };
+
+    ////////////////////////////////////////////////////////////////
+    // clamp
+    PN.clamp = function (elements, lines) {
+        $(elements).each(function(index, element){
+            clamp(element);
+        });
+
+        function clamp(element) {
+            var $element = $(element),
+                fullText = $element.data('full-text'),
+                testText = '&nbsp;',
+                lineHeight,
+                pos;
+
+            if (fullText === undefined) {
+                fullText = $element.text();
+                $element.data('full-text', fullText);
+            }
+
+            for (var i = 1; i < lines; i++) {
+                testText += '<br/>&nbsp;';
+            }
+
+            $element.html(testText);
+            lineHeight = $element.height();
+            $element.html(fullText);
+
+            if ($element.height() === lineHeight) {
+                return;
+            } else if ($element.height() < lineHeight) {
+                while ($element.height() < lineHeight) {
+                    $element.html($element.html() + '<br />&nbsp;')
+                }
+                return;
+            }
+
+            for (var i = 0; i < fullText.length; i++) {
+                if (fullText[i] !== ' ') {
+                    continue;
+                }
+
+                var trimedText = fullText.substring(0, i);
+                $element.html(trimedText + '...');
+                if ($element.height() > lineHeight) {
+                    break;
+                }
+
+                pos = i;
+            }
+
+            if (pos === undefined) {
+                $element.html('...');
+            } else {
+                $element.html(fullText.substring(0, pos) + '...');
+            }
+        }
     };
 
     ////////////////////////////////////////////////////////////////
@@ -338,7 +396,7 @@
             .complete(function (jqXHR, textStatus) {
                 options.onComplete(jqXHR, textStatus);
             })
-        ;
+            ;
     };
 
     ////////////////////////////////////////////////////////////////
