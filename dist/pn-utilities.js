@@ -124,64 +124,6 @@
     };
 
     ////////////////////////////////////////////////////////////////
-    // clamp
-    PN.clamp = function (elements, lines) {
-        $(elements).each(function(index, element){
-            clamp(element);
-        });
-
-        function clamp(element) {
-            var $element = $(element),
-                fullText = $element.data('full-text'),
-                testText = '&nbsp;',
-                lineHeight,
-                pos;
-
-            if (fullText === undefined) {
-                fullText = $element.text();
-                $element.data('full-text', fullText);
-            }
-
-            for (var i = 1; i < lines; i++) {
-                testText += '<br/>&nbsp;';
-            }
-
-            $element.html(testText);
-            lineHeight = $element.height();
-            $element.html(fullText);
-
-            if ($element.height() === lineHeight) {
-                return;
-            } else if ($element.height() < lineHeight) {
-                while ($element.height() < lineHeight) {
-                    $element.html($element.html() + '<br />&nbsp;')
-                }
-                return;
-            }
-
-            for (var i = 0; i < fullText.length; i++) {
-                if (fullText[i] !== ' ') {
-                    continue;
-                }
-
-                var trimedText = fullText.substring(0, i);
-                $element.html(trimedText + '...');
-                if ($element.height() > lineHeight) {
-                    break;
-                }
-
-                pos = i;
-            }
-
-            if (pos === undefined) {
-                $element.html('...');
-            } else {
-                $element.html(fullText.substring(0, pos) + '...');
-            }
-        }
-    };
-
-    ////////////////////////////////////////////////////////////////
     // pasteHtmlAtCaret
     // http://stackoverflow.com/questions/6690752/insert-html-at-caret-in-a-contenteditable-div/6691294#6691294
     PN.pasteHtmlAtCaret = function (html, selectPastedContent) {
