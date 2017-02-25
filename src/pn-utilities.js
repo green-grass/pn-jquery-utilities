@@ -81,6 +81,18 @@
     };
 
     ////////////////////////////////////////////////////////////////
+    // camelToKebabCase
+    PN.camelToKebabCase = function (source) {
+        return source.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2').toLowerCase();;
+    };
+
+    ////////////////////////////////////////////////////////////////
+    // kebabToCamelCase
+    PN.kebabToCamelCase = function (source) {
+        return source.replace(/(\-\w)/g, function (m) { return m[1].toUpperCase(); });
+    };
+
+    ////////////////////////////////////////////////////////////////
     // outerHtml
     PN.outerHtml = function (elements) {
         return $("<div></div>").append($(elements).clone()).html();
@@ -91,9 +103,9 @@
     PN.textWithLineBreaks = function (html) {
         var breakToken = '_______break_______',
             lineBreakedHtml = html.replace(/<br\s?\/?>/gi, breakToken)
-                .replace(/<p\.*?>(.*?)<\/p>/gi, breakToken + "$1" + breakToken)
-                .replace(/<div\.*?>(.*?)<\/div>/gi, breakToken + "$1" + breakToken)
-                .replace(/<li\.*?>(.*?)<\/li>/gi, breakToken + "$1" + breakToken);
+                                  .replace(/<p\.*?>(.*?)<\/p>/gi, breakToken + "$1" + breakToken)
+                                  .replace(/<div\.*?>(.*?)<\/div>/gi, breakToken + "$1" + breakToken)
+                                  .replace(/<li\.*?>(.*?)<\/li>/gi, breakToken + "$1" + breakToken);
         var ret = $("<div></div>").html(lineBreakedHtml).text().replace(/\n/g, "").replace(new RegExp(breakToken, "g"), "\n");
         while (ret.indexOf("\n\n") > -1) {
             ret = ret.replace("\n\n", "\n");
@@ -105,9 +117,9 @@
     // escapeHtmlWithLineBreaks
     PN.escapeHtmlWithLineBreaks = function (html) {
         return html.replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/\n/g, "<br />");
+                   .replace(/</g, "&lt;")
+                   .replace(/>/g, "&gt;")
+                   .replace(/\n/g, "<br />");
     };
 
     ////////////////////////////////////////////////////////////////
@@ -338,7 +350,7 @@
             .complete(function (jqXHR, textStatus) {
                 options.onComplete(jqXHR, textStatus);
             })
-            ;
+        ;
     };
 
     ////////////////////////////////////////////////////////////////
